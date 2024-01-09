@@ -1,6 +1,5 @@
 package AlexBorzilov.newsfeed.service;
 
-import AlexBorzilov.newsfeed.dto.AuthDto;
 import AlexBorzilov.newsfeed.dto.LoginUserDto;
 import AlexBorzilov.newsfeed.dto.RegisterUserDto;
 import AlexBorzilov.newsfeed.entity.UserEntity;
@@ -33,20 +32,6 @@ public class AuthService {
                 .encode(registrationRequest.getPassword()));
         UserEntity user = userMapper.registerUserDtoToUserEntity(registrationRequest);
         user = userRepo.save(user);
-        LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
-        userDto.setToken(securityUtilities.getToken(user.getId()));
-        return new CustomSuccessResponse<>(userDto);
-    }
-
-    public CustomSuccessResponse<LoginUserDto> login(AuthDto request) {
-        UserEntity user = Optional
-                .ofNullable(userRepo.findByEmail(request.getEmail()))
-                .orElseThrow(() -> new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
-        if (!securityUtilities
-                .getEncoder()
-                .matches(request.getPassword(), user.getPassword())) {
-            throw new NewsFeedException(ErrorCodes.PASSWORD_NOT_VALID.getErrorMessage());
-        }
         LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
         userDto.setToken(securityUtilities.getToken(user.getId()));
         return new CustomSuccessResponse<>(userDto);

@@ -1,6 +1,6 @@
 package AlexBorzilov.newsfeed.controller;
 
-import AlexBorzilov.newsfeed.dto.AuthDto;
+
 import AlexBorzilov.newsfeed.dto.RegisterUserDto;
 import AlexBorzilov.newsfeed.service.AuthService;
 import jakarta.validation.Valid;
@@ -22,9 +22,5 @@ public class AuthController {
         return ResponseEntity.ok(authService.registerUser(registrationRequest));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthDto request){
-        return ResponseEntity.ok(authService.login(request));
-    }
 
 }

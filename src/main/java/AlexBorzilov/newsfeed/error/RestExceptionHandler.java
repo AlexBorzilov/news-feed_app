@@ -1,7 +1,6 @@
 package AlexBorzilov.newsfeed.error;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
@@ -19,72 +18,71 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
-    private final boolean success = true;
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<?> handleNotReadableMessageException() {
+    public ResponseEntity<BaseSuccessResponse> handleNotReadableMessageException() {
         return new ResponseEntity<>(new BaseSuccessResponse(
-                ErrorCodes.determineErrorCode(ValidationConstants.HTTP_MESSAGE_NOT_READABLE_EXCEPTION), success),
+                ErrorCodes.determineErrorCode(ValidationConstants.HTTP_MESSAGE_NOT_READABLE_EXCEPTION)),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<?> handleNotSupportedRequestMethodException() {
-        return new ResponseEntity<>(new CustomSuccessResponse<>(ValidationConstants.HTTP_MESSAGE_NOT_READABLE_EXCEPTION,
-                ErrorCodes.determineErrorCode(ValidationConstants.HTTP_MESSAGE_NOT_READABLE_EXCEPTION), success),
-                HttpStatus.BAD_REQUEST);
+    public ResponseEntity<BaseSuccessResponse> handleNotSupportedRequestMethodException() {
+        return new ResponseEntity<>(new BaseSuccessResponse(ErrorCodes.determineErrorCode(
+                ValidationConstants.HTTP_MESSAGE_NOT_READABLE_EXCEPTION)), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<?> handleException(MissingServletRequestParameterException e) {
-        List<String> errorList = e
+    public ResponseEntity<CustomSuccessResponse<List<Integer>>> handleException(MissingServletRequestParameterException e) {
+        List<Integer> statusCodes = e
                 .getBody()
                 .getDetail()
                 .lines()
-                .toList();
-        List<Integer> errorCodeList = errorList
-                .stream()
                 .map(ErrorCodes::determineErrorCode)
                 .distinct()
                 .toList();
-        return new ResponseEntity<>(new CustomSuccessResponse<>(errorList, errorCodeList.get(0), success),
+        return new ResponseEntity<>(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0)),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NewsFeedException.class)
-    public ResponseEntity<?> handleBusinessException() {
-        return new ResponseEntity<>(new CustomSuccessResponse<>(ValidationConstants.TASK_NOT_FOUND,
-                ErrorCodes.determineErrorCode(ValidationConstants.TASK_NOT_FOUND), success), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<BaseSuccessResponse> handleBusinessException() {
+        return new ResponseEntity<>(new BaseSuccessResponse(ErrorCodes.determineErrorCode(
+                ValidationConstants.TASK_NOT_FOUND)), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<?> handleValidateException() {
-        return new ResponseEntity<>(new CustomSuccessResponse<>(ValidationConstants.PAGE_SIZE_NOT_VALID,
-                ErrorCodes.determineErrorCode(ValidationConstants.PAGE_SIZE_NOT_VALID), success), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<BaseSuccessResponse> handleValidateException() {
+        return new ResponseEntity<>(new BaseSuccessResponse(ErrorCodes.determineErrorCode(
+                ValidationConstants.PAGE_SIZE_NOT_VALID)), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity handleException(ConstraintViolationException e) {
+    public ResponseEntity<CustomSuccessResponse<List<Integer>>> handleException(ConstraintViolationException e) {
         List<Integer> statusCodes = e.getConstraintViolations()
                 .stream()
                 .map(error -> ErrorCodes.determineErrorCode(error.getMessage()))
-                .collect(Collectors.toList());
-        return ResponseEntity.badRequest().body(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0), true));
+                .toList();
+        return new ResponseEntity<>(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0)),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity handleException(MethodArgumentNotValidException e) {
-        List<Integer> statusCodes = e.getBindingResult().getAllErrors()
+    public ResponseEntity<CustomSuccessResponse<List<Integer>>> handleException(MethodArgumentNotValidException e) {
+        List<Integer> statusCodes = e
+                .getBindingResult()
+                .getAllErrors()
                 .stream()
                 .map(error -> ErrorCodes.determineErrorCode(error.getDefaultMessage()))
-                .collect(Collectors.toList());
-        return ResponseEntity.badRequest().body(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0), true));
+                .toList();
+        return new ResponseEntity<>(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0)),
+                HttpStatus.BAD_REQUEST);
     }
 }

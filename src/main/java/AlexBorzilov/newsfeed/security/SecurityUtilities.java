@@ -17,6 +17,8 @@ public class SecurityUtilities {
 
     @Value("${jwt.secret}")
     public String secret;
+    @Value("${jwt.bearer}")
+    public String bearer;
 
     public PasswordEncoder getEncoder() {
         return new BCryptPasswordEncoder(4);
@@ -29,7 +31,7 @@ public class SecurityUtilities {
         byte[] byteSecret = secret.getBytes();
 
         String token;
-        token = Jwts.builder()
+        token = bearer + Jwts.builder()
                 .claim("id", id.toString())
                 .setIssuedAt(now)
                 .setNotBefore(now)
