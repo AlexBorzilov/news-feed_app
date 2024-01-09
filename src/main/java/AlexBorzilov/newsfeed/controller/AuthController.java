@@ -1,5 +1,6 @@
 package AlexBorzilov.newsfeed.controller;
 
+import AlexBorzilov.newsfeed.dto.AuthDto;
 import AlexBorzilov.newsfeed.dto.LoginUserDto;
 import AlexBorzilov.newsfeed.dto.RegisterUserDto;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
@@ -23,4 +24,10 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody @Valid RegisterUserDto register){
         return ResponseEntity.ok(authService.registrationRequest(register));
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Valid AuthDto request){
+        return ResponseEntity.ok(authService.request(request));
+    }
+
 }

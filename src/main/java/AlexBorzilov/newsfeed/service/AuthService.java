@@ -1,5 +1,6 @@
 package AlexBorzilov.newsfeed.service;
 
+import AlexBorzilov.newsfeed.dto.AuthDto;
 import AlexBorzilov.newsfeed.dto.LoginUserDto;
 import AlexBorzilov.newsfeed.dto.RegisterUserDto;
 import AlexBorzilov.newsfeed.entity.UserEntity;
@@ -14,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.beans.Encoder;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -27,17 +31,29 @@ public class AuthService {
                     .USER_ALREADY_EXISTS
                     .getErrorMessage());
         }
-        System.out.print("энкодер ");
         registrationRequest.setPassword(securityUtilities
                 .getEncoder()
                 .encode(registrationRequest.getPassword()));
-        System.out.println("отработал: " + registrationRequest.getPassword());
         UserEntity user = userMapper.registerUserDtoToUserEntity(registrationRequest);
         user = userRepo.save(user);
         LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
-        System.out.print("токен ");
         userDto.setToken(securityUtilities.getToken(user.getId()));
-        System.out.println("готов: " + userDto.getToken());
         return new CustomSuccessResponse<>(userDto);
+    }
+    public CustomSuccessResponse<LoginUserDto> request(AuthDto authRequest){
+        UserEntity user = Optional
+                .ofNullable(userRepo.findByEmail(authRequest.getEmail()))
+                .orElseThrow(() -> new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
+
+        if (!securityUtilities
+                .getEncoder()
+                .matches(authRequest.getPassword(), user.getPassword())) {
+            throw new NewsFeedException(ErrorCodes.PASSWORD_NOT_VALID.getErrorMessage());
+        }
+        else {
+            LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
+            userDto.setToken(securityUtilities.getToken(user.getId()));
+            return new CustomSuccessResponse<>(userDto);
+        }
     }
 }
