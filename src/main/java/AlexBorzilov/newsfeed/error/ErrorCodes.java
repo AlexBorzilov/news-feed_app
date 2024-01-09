@@ -24,7 +24,7 @@ public enum ErrorCodes {
     PER_PAGE_MAX_NOT_VALID(19, "perPage must be less or equal 100"),
     CODE_NOT_NULL(20, "Required String parameter 'code' is not present"),
     EXCEPTION_HANDLER_NOT_PROVIDED(21, "Exception handler not provided"),
-    REQUEST_IS_NOT_MULTIPART(22, "Current request is not a multipart request"),
+    REQUEST_IS_NOT_MULTIPART(22, "Current login is not a multipart login"),
     MAX_UPLOAD_SIZE_EXCEEDED(23, "Maximum upload size exceeded"),
     USER_AVATAR_NOT_NULL(24, "user avatar mustn't be null"),
     PASSWORD_NOT_VALID(25, "password not valid"),

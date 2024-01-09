@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
-import java.beans.Encoder;
 import java.util.Optional;
 
 @Service
@@ -25,11 +24,9 @@ public class AuthService {
     private final UserRepo userRepo;
     private final static UserMapper userMapper = new UserMapperImpl();
 
-    public CustomSuccessResponse<LoginUserDto> registrationRequest(RegisterUserDto registrationRequest) {
+    public CustomSuccessResponse<LoginUserDto> registerUser(RegisterUserDto registrationRequest) {
         if (userRepo.findByEmail(registrationRequest.getEmail()) != null) {
-            throw new NewsFeedException(ErrorCodes
-                    .USER_ALREADY_EXISTS
-                    .getErrorMessage());
+            throw new NewsFeedException(ErrorCodes.USER_ALREADY_EXISTS.getErrorMessage());
         }
         registrationRequest.setPassword(securityUtilities
                 .getEncoder()
@@ -40,20 +37,18 @@ public class AuthService {
         userDto.setToken(securityUtilities.getToken(user.getId()));
         return new CustomSuccessResponse<>(userDto);
     }
-    public CustomSuccessResponse<LoginUserDto> request(AuthDto authRequest){
-        UserEntity user = Optional
-                .ofNullable(userRepo.findByEmail(authRequest.getEmail()))
-                .orElseThrow(() -> new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
 
+    public CustomSuccessResponse<LoginUserDto> login(AuthDto request) {
+        UserEntity user = Optional
+                .ofNullable(userRepo.findByEmail(request.getEmail()))
+                .orElseThrow(() -> new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
         if (!securityUtilities
                 .getEncoder()
-                .matches(authRequest.getPassword(), user.getPassword())) {
+                .matches(request.getPassword(), user.getPassword())) {
             throw new NewsFeedException(ErrorCodes.PASSWORD_NOT_VALID.getErrorMessage());
         }
-        else {
-            LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
-            userDto.setToken(securityUtilities.getToken(user.getId()));
-            return new CustomSuccessResponse<>(userDto);
-        }
+        LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
+        userDto.setToken(securityUtilities.getToken(user.getId()));
+        return new CustomSuccessResponse<>(userDto);
     }
 }
