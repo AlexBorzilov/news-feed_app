@@ -17,8 +17,11 @@ build/
 *.iml
 *.ipr
 
-application-*.properties
-
+application*.properties
+src/main/resources/application.properties
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+src/main/java/AlexBorzilov/newsfeed/controller/UserController.java
+src/main/java/AlexBorzilov/newsfeed/service/UserService.java
+src/main/java/AlexBorzilov/newsfeed/view/
