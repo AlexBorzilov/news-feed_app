@@ -21,7 +21,6 @@ import java.util.Optional;
 public class AuthService {
     private final SecurityUtilities securityUtilities;
     private final UserRepo userRepo;
-    private final static UserMapper userMapper = new UserMapperImpl();
 
     public CustomSuccessResponse<LoginUserDto> registerUser(RegisterUserDto registrationRequest) {
         if (userRepo.findByEmail(registrationRequest.getEmail()) != null) {
@@ -30,9 +29,9 @@ public class AuthService {
         registrationRequest.setPassword(securityUtilities
                 .getEncoder()
                 .encode(registrationRequest.getPassword()));
-        UserEntity user = userMapper.registerUserDtoToUserEntity(registrationRequest);
+        UserEntity user = UserMapper.INSTANCE.registerUserDtoToUserEntity(registrationRequest);
         user = userRepo.save(user);
-        LoginUserDto userDto = userMapper.userEntityToLoginUserDto(user);
+        LoginUserDto userDto = UserMapper.INSTANCE.userEntityToLoginUserDto(user);
         userDto.setToken(securityUtilities.getToken(user.getId()));
         return new CustomSuccessResponse<>(userDto);
     }
