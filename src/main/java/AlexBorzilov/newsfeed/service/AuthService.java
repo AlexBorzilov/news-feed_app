@@ -6,15 +6,12 @@ import AlexBorzilov.newsfeed.dto.RegisterUserDto;
 import AlexBorzilov.newsfeed.entity.UserEntity;
 import AlexBorzilov.newsfeed.error.ErrorCodes;
 import AlexBorzilov.newsfeed.error.NewsFeedException;
-
 import AlexBorzilov.newsfeed.mappers.UserMapper;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.security.JwtUtility;
 import AlexBorzilov.newsfeed.security.SecurityConfig;
 import lombok.RequiredArgsConstructor;
-
-
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
