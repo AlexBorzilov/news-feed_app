@@ -56,11 +56,11 @@ public enum ErrorCodes {
         this.errorMessage = errorMessage;
     }
 
-    public int getErrorCode(){
+    public int getErrorCode() {
         return errorCode;
     }
 
-    public String getErrorMessage(){
+    public String getErrorMessage() {
         return errorMessage;
     }
 

@@ -2,31 +2,22 @@ package AlexBorzilov.newsfeed.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.UUID;
 
-@Configuration
-public class SecurityUtilities {
+@Component
+public class JwtUtility {
 
     @Value("${jwt.secret}")
     public String secret;
+
     @Value("${jwt.bearer}")
     public String bearer;
 
-    @Bean
-    public PasswordEncoder getEncoder() {
-        return new BCryptPasswordEncoder(4);
-    }
-
-    @Bean
     public String getToken(UUID id) {
 
         Date now = new Date();
@@ -43,4 +34,5 @@ public class SecurityUtilities {
                 .compact();
         return token;
     }
+
 }
