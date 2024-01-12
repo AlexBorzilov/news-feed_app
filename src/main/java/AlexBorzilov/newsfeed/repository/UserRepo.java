@@ -12,7 +12,4 @@ public interface UserRepo extends JpaRepository<UserEntity, UUID> {
     @Query(value = "from UserEntity u where u.email = ?1")
     Optional<UserEntity> findByEmail(String email);
 
-    boolean existsByEmail(String email);
-
-    boolean existsById(UUID id);
 }

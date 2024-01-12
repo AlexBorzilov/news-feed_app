@@ -10,27 +10,23 @@ import AlexBorzilov.newsfeed.mappers.UserMapper;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.security.JwtUtility;
-import AlexBorzilov.newsfeed.security.SecurityConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final JwtUtility jwtUtility;
-    private final SecurityConfig securityConfig;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
 
     public CustomSuccessResponse<LoginUserDto> registerUser(RegisterUserDto registrationRequest) {
         if (!userRepo.findByEmail(registrationRequest.getEmail()).isEmpty()) {
             throw new NewsFeedException(ErrorCodes.USER_ALREADY_EXISTS.getErrorMessage());
         }
-        registrationRequest.setPassword(securityConfig
-                .getEncoder()
+        registrationRequest.setPassword(passwordEncoder
                 .encode(registrationRequest.getPassword()));
         UserEntity user = UserMapper.INSTANCE.registerUserDtoToUserEntity(registrationRequest);
         user = userRepo.save(user);
@@ -42,8 +38,7 @@ public class AuthService {
     public CustomSuccessResponse<LoginUserDto> login(AuthDto request) {
         UserEntity user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
-        if (!securityConfig
-                .getEncoder()
+        if (!passwordEncoder
                 .matches(request.getPassword(), user.getPassword())) {
             throw new NewsFeedException(ErrorCodes.PASSWORD_NOT_VALID.getErrorMessage());
         }

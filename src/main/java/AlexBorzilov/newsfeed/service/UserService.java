@@ -3,7 +3,6 @@ package AlexBorzilov.newsfeed.service;
 
 import AlexBorzilov.newsfeed.entity.UserEntity;
 import AlexBorzilov.newsfeed.error.ErrorCodes;
-import AlexBorzilov.newsfeed.error.NewsFeedException;
 
 import AlexBorzilov.newsfeed.mappers.UserMapper;
 import AlexBorzilov.newsfeed.repository.UserRepo;
@@ -34,21 +33,18 @@ public class UserService implements UserDetailsService {
         return new CustomSuccessResponse<>(list);
     }
 
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return this::loadUserByUsername;
     }
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-            UserEntity user = userRepo.findById(UUID.fromString(id)).orElseThrow(()->new UsernameNotFoundException(
-                    String.format(ErrorCodes.USER_NOT_FOUND.getErrorMessage())
-            ));
-            org.springframework.security.core.userdetails.User userDetails = new User(
-                    user.getUsername(), user.getPassword(), user.getAuthorities());
-            return userDetails;
+        UserEntity user = userRepo.findById(UUID.fromString(id)).orElseThrow(() -> new UsernameNotFoundException(
+                String.format(ErrorCodes.USER_NOT_FOUND.getErrorMessage())
+        ));
+        org.springframework.security.core.userdetails.User userDetails = new User(
+                user.getUsername(), user.getPassword(), user.getAuthorities());
+        return userDetails;
     }
-//
-//    public CustomSuccessResponse<PutUserDtoResponse> replaceUser (PutUserDto userNewData){
-//
-//    }
 }
