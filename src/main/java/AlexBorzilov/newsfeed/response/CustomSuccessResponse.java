@@ -11,11 +11,11 @@ public class CustomSuccessResponse<T> {
     private boolean success = true;
     private int statusCode = 0;
 
-    public CustomSuccessResponse(T data){
+    public CustomSuccessResponse(T data) {
         this.data = data;
     }
 
-    public CustomSuccessResponse(T codes, int statusCode){
+    public CustomSuccessResponse(T codes, int statusCode) {
         this.codes = codes;
         this.statusCode = statusCode;
     }
