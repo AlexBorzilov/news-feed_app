@@ -12,6 +12,8 @@ import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.security.JwtUtility;
 import AlexBorzilov.newsfeed.security.SecurityConfig;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,7 +26,7 @@ public class AuthService {
     private final UserRepo userRepo;
 
     public CustomSuccessResponse<LoginUserDto> registerUser(RegisterUserDto registrationRequest) {
-        if (userRepo.findByEmail(registrationRequest.getEmail()) != null) {
+        if (!userRepo.findByEmail(registrationRequest.getEmail()).isEmpty()) {
             throw new NewsFeedException(ErrorCodes.USER_ALREADY_EXISTS.getErrorMessage());
         }
         registrationRequest.setPassword(securityConfig
@@ -33,13 +35,12 @@ public class AuthService {
         UserEntity user = UserMapper.INSTANCE.registerUserDtoToUserEntity(registrationRequest);
         user = userRepo.save(user);
         LoginUserDto userDto = UserMapper.INSTANCE.userEntityToLoginUserDto(user);
-        userDto.setToken(jwtUtility.getToken(user.getId()));
+        userDto.setToken(jwtUtility.generateToken(user));
         return new CustomSuccessResponse<>(userDto);
     }
 
     public CustomSuccessResponse<LoginUserDto> login(AuthDto request) {
-        UserEntity user = Optional
-                .ofNullable(userRepo.findByEmail(request.getEmail()))
+        UserEntity user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
         if (!securityConfig
                 .getEncoder()
@@ -48,7 +49,8 @@ public class AuthService {
         }
 
         LoginUserDto userDto = UserMapper.INSTANCE.userEntityToLoginUserDto(user);
-        userDto.setToken(jwtUtility.getToken(user.getId()));
+        userDto.setToken(jwtUtility.generateToken(user));
         return new CustomSuccessResponse<>(userDto);
     }
+
 }
