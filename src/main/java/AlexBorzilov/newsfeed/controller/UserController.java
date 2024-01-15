@@ -1,7 +1,9 @@
 package AlexBorzilov.newsfeed.controller;
 
 
+import AlexBorzilov.newsfeed.dto.PutUserDto;
 import AlexBorzilov.newsfeed.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,5 +17,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> all() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @PutMapping
+    public ResponseEntity<?> replaceUser(@RequestBody @Valid PutUserDto userNewData){
+        return ResponseEntity.ok(userService.replaceUser(userNewData));
     }
 }

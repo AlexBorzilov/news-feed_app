@@ -1,6 +1,8 @@
 package AlexBorzilov.newsfeed.repository;
 
+import AlexBorzilov.newsfeed.dto.PutUserDto;
 import AlexBorzilov.newsfeed.entity.UserEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
