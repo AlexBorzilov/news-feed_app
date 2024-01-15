@@ -21,11 +21,13 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
+
+
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
 
     private final JwtUtility jwtUtility;
-    private final UserService userService;
+    private final UserLoadUtility userLoadUtility;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
@@ -41,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
         final String id = jwtUtility.extractUserName(token);
 
         if (!id.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(id);
+            UserDetails userDetails = userLoadUtility.loadUserByUsername(id);
 
             if (jwtUtility.isTokenValid(token)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();

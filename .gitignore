@@ -24,6 +24,5 @@ out/
 !**/src/test/**/out/
 
 src/main/java/AlexBorzilov/newsfeed/dto/PutUserDto.java
-src/main/java/AlexBorzilov/newsfeed/controller/UserController.java
 src/main/java/AlexBorzilov/newsfeed/view/
 src/main/java/AlexBorzilov/newsfeed/response/PutUserDtoResponse.java
