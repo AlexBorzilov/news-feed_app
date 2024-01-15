@@ -12,12 +12,16 @@ import lombok.Setter;
 public class RegisterUserDto {
     private String avatar;
     @NotBlank(message = ValidationConstants.USER_EMAIL_NOT_NULL)
-    @Size(min = 3, max = 100, message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
-    @Email(regexp = ".+[@].+[\\.].+", message = ValidationConstants.USER_EMAIL_NOT_VALID)
+    @Size(min = 3, max = 100,
+            message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
+    @Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
+            message = ValidationConstants.USER_EMAIL_NOT_VALID)
     private String email;
-    @Size(min = 3, max = 25)
+    @Size(min = 3, max = 25,
+    message = ValidationConstants.USERNAME_SIZE_NOT_VALID)
     private String name;
     private String password;
-    @Size(min = 3, max = 25)
+    @Size(min = 3, max = 25,
+    message = ValidationConstants.ROLE_SIZE_NOT_VALID)
     private String role;
 }

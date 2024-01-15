@@ -11,10 +11,13 @@ import lombok.Setter;
 @Setter
 public class PutUserDto {
     String avatar;
-    @Email(regexp = ".+[@].+[\\.].+", message = ValidationConstants.USER_EMAIL_NOT_VALID)
+    @Size(min = 3, max = 100,
+            message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
+    @Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
+            message = ValidationConstants.USER_EMAIL_NOT_VALID)
     String email;
-    @Size(min = 3, max = 25, message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
-    String name;
     @Size(min = 3, max = 25, message = ValidationConstants.USERNAME_SIZE_NOT_VALID)
+    String name;
+    @Size(min = 3, max = 25, message = ValidationConstants.ROLE_SIZE_NOT_VALID)
     String role;
 }

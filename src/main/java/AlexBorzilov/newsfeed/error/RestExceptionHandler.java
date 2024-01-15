@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class RestExceptionHandler {
 
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseSuccessResponse> handleNotReadableMessageException() {
@@ -52,7 +53,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(NewsFeedException.class)
     public ResponseEntity<BaseSuccessResponse> handleBusinessException() {
         return new ResponseEntity<>(new BaseSuccessResponse(ErrorCodes.determineErrorCode(
-                ValidationConstants.TASK_NOT_FOUND)), HttpStatus.BAD_REQUEST);
+                ValidationConstants.USER_PASSWORD_NULL)), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
