@@ -34,7 +34,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class WebSecurityConfig {
     private final JwtFilter jwtFilter;
-    private final UserService userService;
+    private final UserLoadUtility userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
@@ -61,7 +61,7 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService.userDetailsService());
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
