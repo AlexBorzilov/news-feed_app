@@ -42,16 +42,17 @@ public class UserService{
     public CustomSuccessResponse<PutUserDtoResponse> replaceUser(PutUserDto userNewData){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-
-        userRepo.findByEmail(email).ifPresent(userEntity -> {
-                userEntity.setName(userNewData.getName());
-                userEntity.setAvatar(userNewData.getAvatar());
-                userEntity.setRole(userNewData.getRole());
-                userEntity.setEmail(userNewData.getEmail());
-                userRepo.save(userEntity);
-        });
-        PutUserDtoResponse response = UserMapper.INSTANCE.UserEntityToPutUserDtoResponse(userRepo.findByEmail(email).orElseThrow(()->
-                new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
+        UserEntity user = userRepo.findByEmail(email).orElseThrow(()->
+        new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
+        if(!userRepo.findByEmail(userNewData.getEmail()).isEmpty() && !user.getEmail().equals(userNewData.getEmail())){
+            throw new NewsFeedException(ErrorCodes.USER_WITH_THIS_EMAIL_ALREADY_EXIST.getErrorMessage());
+        }
+        user.setEmail(userNewData.getEmail());
+        user.setAvatar(userNewData.getAvatar());
+        user.setName(userNewData.getName());
+        user.setRole(userNewData.getRole());
+        PutUserDtoResponse response = UserMapper.INSTANCE.UserEntityToPutUserDtoResponse(user);
+        userRepo.save(user);
         return new CustomSuccessResponse<>(response);
     }
 

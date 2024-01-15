@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class PutUserDto {
     String avatar;
-    @Email
+    @Email(regexp = ".+[@].+[\\.].+", message = ValidationConstants.USER_EMAIL_NOT_VALID)
     String email;
     @Size(min = 3, max = 25, message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
     String name;

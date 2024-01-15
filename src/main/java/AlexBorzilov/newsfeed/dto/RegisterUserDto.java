@@ -13,7 +13,7 @@ public class RegisterUserDto {
     private String avatar;
     @NotBlank(message = ValidationConstants.USER_EMAIL_NOT_NULL)
     @Size(min = 3, max = 100, message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
-    @Email(message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
+    @Email(regexp = ".+[@].+[\\.].+", message = ValidationConstants.USER_EMAIL_NOT_VALID)
     private String email;
     @Size(min = 3, max = 25)
     private String name;

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthDto {
-    @Email
+    @Email(regexp = ".+[@].+[\\.].+", message = ValidationConstants.USER_EMAIL_NOT_VALID)
     @Size(min = 3, max = 100, message = ValidationConstants.EMAIL_SIZE_NOT_VALID)
     private String email;
     @NotBlank
