@@ -54,4 +54,17 @@ public class UserService{
                 new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
         return new CustomSuccessResponse<>(response);
     }
+
+    public CustomSuccessResponse<PublicUserView> getUserInfoById(UUID id){
+        PublicUserView view = UserMapper.INSTANCE.userEntityToPublicUserView(userRepo.findById(id).orElseThrow(()->
+                new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
+        return new CustomSuccessResponse<>(view);
+    }
+    public CustomSuccessResponse<PublicUserView> getUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        PublicUserView view = UserMapper.INSTANCE.userEntityToPublicUserView(userRepo.findByEmail(email).orElseThrow(()->
+        new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
+        return new CustomSuccessResponse<>(view);
+    }
 }
