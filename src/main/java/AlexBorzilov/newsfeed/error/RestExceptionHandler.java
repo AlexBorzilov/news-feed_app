@@ -9,6 +9,7 @@ import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -51,16 +52,16 @@ public class RestExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NewsFeedException.class)
-    public ResponseEntity<BaseSuccessResponse> handleBusinessException() {
+    public ResponseEntity<BaseSuccessResponse> handleBusinessException(NewsFeedException e) {
         return new ResponseEntity<>(new BaseSuccessResponse(ErrorCodes.determineErrorCode(
-                ValidationConstants.USER_PASSWORD_NULL)), HttpStatus.BAD_REQUEST);
+                e.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<BaseSuccessResponse> handleValidateException() {
         return new ResponseEntity<>(new BaseSuccessResponse(ErrorCodes.determineErrorCode(
-                ValidationConstants.PAGE_SIZE_NOT_VALID)), HttpStatus.BAD_REQUEST);
+                ValidationConstants.MAX_UPLOAD_SIZE_EXCEEDED)), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -77,11 +78,14 @@ public class RestExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<CustomSuccessResponse<List<Integer>>> handleException(MethodArgumentNotValidException e) {
-        List<Integer> statusCodes = e
-                .getBindingResult()
-                .getAllErrors()
+        List<String> errorCodes = e.getBindingResult().getFieldErrors()
                 .stream()
-                .map(error -> ErrorCodes.determineErrorCode(error.getDefaultMessage()))
+                .map(FieldError::getDefaultMessage)
+                .toList();
+        List<Integer> statusCodes = errorCodes
+                .stream()
+                .map(error -> ErrorCodes.determineErrorCode(error))
+                .distinct()
                 .toList();
         return new ResponseEntity<>(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0)),
                 HttpStatus.BAD_REQUEST);

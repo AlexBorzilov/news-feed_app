@@ -18,5 +18,6 @@ public class CustomSuccessResponse<T> {
     public CustomSuccessResponse(T codes, int statusCode) {
         this.codes = codes;
         this.statusCode = statusCode;
+        this.success = true;
     }
 }
