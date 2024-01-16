@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService{
     private final UserRepo userRepo;
 
-    @Transactional
+
     public CustomSuccessResponse<List<PublicUserView>> getAllUsers() {
         List<PublicUserView> list = userRepo
                 .findAll()
@@ -33,7 +33,7 @@ public class UserService{
                 .toList();
         return new CustomSuccessResponse<>(list);
     }
-
+    @Transactional
     public CustomSuccessResponse<PutUserDtoResponse> replaceUser(PutUserDto userNewData){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
