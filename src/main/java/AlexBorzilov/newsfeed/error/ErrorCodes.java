@@ -71,7 +71,7 @@ public enum ErrorCodes {
                 return e.errorCode;
             }
         }
-        return -1;
+        return 0;
     }
 }
 

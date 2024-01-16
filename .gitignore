@@ -22,7 +22,3 @@ src/main/resources/application.properties
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
-src/main/java/AlexBorzilov/newsfeed/dto/PutUserDto.java
-src/main/java/AlexBorzilov/newsfeed/view/
-src/main/java/AlexBorzilov/newsfeed/response/PutUserDtoResponse.java
