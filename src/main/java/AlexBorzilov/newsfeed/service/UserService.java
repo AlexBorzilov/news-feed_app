@@ -1,35 +1,30 @@
 package AlexBorzilov.newsfeed.service;
 
+import java.util.List;
+import java.util.UUID;
 
 import AlexBorzilov.newsfeed.dto.PutUserDto;
 import AlexBorzilov.newsfeed.entity.UserEntity;
 import AlexBorzilov.newsfeed.error.ErrorCodes;
-
 import AlexBorzilov.newsfeed.error.NewsFeedException;
 import AlexBorzilov.newsfeed.mappers.UserMapper;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.response.PutUserDtoResponse;
 import AlexBorzilov.newsfeed.view.PublicUserView;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService{
     private final UserRepo userRepo;
 
+    @Transactional
     public CustomSuccessResponse<List<PublicUserView>> getAllUsers() {
         List<PublicUserView> list = userRepo
                 .findAll()
