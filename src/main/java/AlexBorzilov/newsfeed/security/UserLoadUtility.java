@@ -18,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserLoadUtility implements UserDetailsService {
     final private UserRepo userRepo;
+
     @Bean
     public UserDetailsService userDetailsService() {
         return this::loadUserByUsername;
@@ -29,8 +30,6 @@ public class UserLoadUtility implements UserDetailsService {
         UserEntity user = userRepo.findById(UUID.fromString(id)).orElseThrow(() -> new UsernameNotFoundException(
                 String.format(ErrorCodes.USER_NOT_FOUND.getErrorMessage())
         ));
-        org.springframework.security.core.userdetails.User userDetails = new User(
-                user.getUsername(), user.getPassword(), user.getAuthorities());
-        return userDetails;
+        return new User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 }

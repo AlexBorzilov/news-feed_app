@@ -2,7 +2,9 @@ package AlexBorzilov.newsfeed.controller;
 
 
 import AlexBorzilov.newsfeed.dto.AuthDto;
+import AlexBorzilov.newsfeed.dto.LoginUserDto;
 import AlexBorzilov.newsfeed.dto.RegisterUserDto;
+import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +23,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid RegisterUserDto registrationRequest) {
+    public ResponseEntity<CustomSuccessResponse<LoginUserDto>> registerUser(
+            @RequestBody @Valid RegisterUserDto registrationRequest) {
         return ResponseEntity.ok(authService.registerUser(registrationRequest));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthDto request) {
+    public ResponseEntity<CustomSuccessResponse<LoginUserDto>> login(
+            @RequestBody @Valid AuthDto request) {
         return ResponseEntity.ok(authService.login(request));
     }
 

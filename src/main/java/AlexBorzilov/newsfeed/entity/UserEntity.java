@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +40,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return String.valueOf(id);
     }
 
     @Override
