@@ -26,16 +26,23 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfoById(@PathVariable("id") @NotBlank(message = ValidationConstants.MAX_UPLOAD_SIZE_EXCEEDED)
-                                                 UUID id){
+                                             UUID id) {
         return ResponseEntity.ok(userService.getUserInfoById(id));
     }
+
     @GetMapping("/info")
-    public ResponseEntity<?> getUserInfo(){
+    public ResponseEntity<?> getUserInfo() {
         return ResponseEntity.ok(userService.getUserInfo());
     }
 
     @PutMapping
-    public ResponseEntity<?> replaceUser(@RequestBody @Valid PutUserDto userNewData){
+    public ResponseEntity<?> replaceUser(@RequestBody @Valid PutUserDto userNewData) {
         return ResponseEntity.ok(userService.replaceUser(userNewData));
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser() {
+        return ResponseEntity.ok(userService.deleteUser());
+    }
+
 }

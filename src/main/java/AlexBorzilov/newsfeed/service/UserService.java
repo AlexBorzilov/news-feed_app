@@ -9,6 +9,7 @@ import AlexBorzilov.newsfeed.error.ErrorCodes;
 import AlexBorzilov.newsfeed.error.NewsFeedException;
 import AlexBorzilov.newsfeed.mappers.UserMapper;
 import AlexBorzilov.newsfeed.repository.UserRepo;
+import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.response.PutUserDtoResponse;
 import AlexBorzilov.newsfeed.view.PublicUserView;
@@ -62,5 +63,15 @@ public class UserService{
         PublicUserView view = UserMapper.INSTANCE.userEntityToPublicUserView(userRepo.findByEmail(email).orElseThrow(()->
         new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
         return new CustomSuccessResponse<>(view);
+    }
+
+    public BaseSuccessResponse deleteUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        userRepo.delete(userRepo.findByEmail(email)
+                .orElseThrow(()->
+                        new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
+        return new BaseSuccessResponse();
     }
 }
