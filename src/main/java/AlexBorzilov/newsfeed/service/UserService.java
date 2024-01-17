@@ -1,6 +1,7 @@
 package AlexBorzilov.newsfeed.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import AlexBorzilov.newsfeed.dto.PutUserDto;
@@ -37,8 +38,8 @@ public class UserService{
     @Transactional
     public CustomSuccessResponse<PutUserDtoResponse> replaceUser(PutUserDto userNewData){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        UserEntity user = userRepo.findByEmail(email).orElseThrow(()->
+        String id = authentication.getName();
+        UserEntity user = userRepo.findById(UUID.fromString(id)).orElseThrow(()->
         new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage()));
         if(!userRepo.findByEmail(userNewData.getEmail()).isEmpty() && !user.getEmail().equals(userNewData.getEmail())){
             throw new NewsFeedException(ErrorCodes.USER_WITH_THIS_EMAIL_ALREADY_EXIST.getErrorMessage());
@@ -59,17 +60,17 @@ public class UserService{
     }
     public CustomSuccessResponse<PublicUserView> getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        PublicUserView view = UserMapper.INSTANCE.userEntityToPublicUserView(userRepo.findByEmail(email).orElseThrow(()->
+        String id = authentication.getName();
+        PublicUserView view = UserMapper.INSTANCE.userEntityToPublicUserView(userRepo.findById(UUID.fromString(id)).orElseThrow(()->
         new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
         return new CustomSuccessResponse<>(view);
     }
 
     public BaseSuccessResponse deleteUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String id = authentication.getName();
 
-        userRepo.delete(userRepo.findByEmail(email)
+                userRepo.delete(userRepo.findById(UUID.fromString(id))
                 .orElseThrow(()->
                         new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())));
         return new BaseSuccessResponse();

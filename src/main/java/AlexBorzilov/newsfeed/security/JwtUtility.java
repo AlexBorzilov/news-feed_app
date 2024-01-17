@@ -29,6 +29,7 @@ public class JwtUtility {
         Map<String, Object> claims = new HashMap<>();
         if (userDetails instanceof UserEntity customUserDetails) {
             claims.put("id", customUserDetails.getId());
+            claims.put("email", customUserDetails.getEmail());
         }
         return bearer + generateToken(claims, userDetails);
     }
@@ -45,9 +46,6 @@ public class JwtUtility {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
 
     public boolean isTokenValid(String token) {
         try {
@@ -57,10 +55,6 @@ public class JwtUtility {
         catch (JwtException | IllegalArgumentException e) {
             throw new NewsFeedException(ErrorCodes.TOKEN_NOT_PROVIDED.getErrorMessage());
         }
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
@@ -78,5 +72,8 @@ public class JwtUtility {
 
     public String extractUserName(String token) {
         return extractAllClaims(token).get("id", String.class);
+    }
+    public String extractEmail(String token){
+        return extractAllClaims(token).get("email", String.class);
     }
 }
