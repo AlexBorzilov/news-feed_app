@@ -20,8 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
-
-
+    
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseSuccessResponse> handleNotReadableMessageException() {
@@ -29,7 +28,6 @@ public class RestExceptionHandler {
                 ErrorCodes.determineErrorCode(ValidationConstants.HTTP_MESSAGE_NOT_READABLE_EXCEPTION)),
                 HttpStatus.BAD_REQUEST);
     }
-
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
