@@ -18,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserLoadUtility implements UserDetailsService {
     final private UserRepo userRepo;
+
     @Bean
     public UserDetailsService userDetailsService() {
         return this::loadUserByUsername;

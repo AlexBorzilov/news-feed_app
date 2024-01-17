@@ -30,8 +30,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomSuccessResponse<PublicUserView>> getUserInfoById(@PathVariable("id") @NotBlank(message = ValidationConstants.MAX_UPLOAD_SIZE_EXCEEDED)
-                                             UUID id) {
+    public ResponseEntity<CustomSuccessResponse<PublicUserView>> getUserInfoById(
+            @PathVariable("id")
+            @NotBlank(message = ValidationConstants.MAX_UPLOAD_SIZE_EXCEEDED) UUID id) {
         return ResponseEntity.ok(userService.getUserInfoById(id));
     }
 
@@ -41,7 +42,8 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<CustomSuccessResponse<PutUserDtoResponse>> replaceUser(@RequestBody @Valid PutUserDto userNewData) {
+    public ResponseEntity<CustomSuccessResponse<PutUserDtoResponse>> replaceUser(
+            @RequestBody @Valid PutUserDto userNewData) {
         return ResponseEntity.ok(userService.replaceUser(userNewData));
     }
 

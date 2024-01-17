@@ -73,7 +73,8 @@ public class JwtUtility {
     public String extractUserName(String token) {
         return extractAllClaims(token).get("id", String.class);
     }
-    public String extractEmail(String token){
+
+    public String extractEmail(String token) {
         return extractAllClaims(token).get("email", String.class);
     }
 }
