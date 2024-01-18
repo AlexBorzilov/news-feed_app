@@ -50,6 +50,6 @@ public class NewsService {
                 new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())
         ));
         newsRepo.save(news);
-        return new CreateNewsSuccessResponse(1, news.getId());
+        return new CreateNewsSuccessResponse(news.getId(), 1);
     }
 }

@@ -8,9 +8,9 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PublicUserView {
-    String avatar;
-    String email;
-    UUID id;
-    String name;
-    String role;
+    private String avatar;
+    private String email;
+    private UUID id;
+    private String name;
+    private String role;
 }

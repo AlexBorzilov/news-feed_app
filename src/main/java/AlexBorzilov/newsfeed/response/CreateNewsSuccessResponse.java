@@ -6,12 +6,12 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CreateNewsSuccessResponse {
-    long id;
-    int statusCode;
-    boolean success = true;
+    private long id;
+    private int statusCode = 1;
+    private boolean success = true;
 
-    public CreateNewsSuccessResponse(int statusCode, long id){
-        this.statusCode = statusCode;
+    public CreateNewsSuccessResponse(long id, int statusCode) {
         this.id = id;
+        this.statusCode = statusCode;
     }
 }

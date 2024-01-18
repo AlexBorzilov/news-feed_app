@@ -13,12 +13,16 @@ import java.util.Set;
 public class NewsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String description;
-    String image;
-    String title;
-    @ManyToMany
-    Set<TagEntity> tags;
-    @ManyToOne
-    UserEntity user;
+    private Long id;
+    private String description;
+    private String image;
+    private String title;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "news_tags",
+            joinColumns = @JoinColumn(name = "news_entity_id"),
+            inverseJoinColumns = @JoinColumn(name = "tags_id"))
+    private Set<TagEntity> tags;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserEntity user;
 }

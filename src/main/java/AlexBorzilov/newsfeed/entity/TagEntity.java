@@ -14,6 +14,6 @@ import lombok.Setter;
 public class TagEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
-    String title;
+    private long id;
+    private String title;
 }
