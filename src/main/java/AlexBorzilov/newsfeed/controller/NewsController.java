@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/news")
@@ -23,5 +22,17 @@ public class NewsController {
     @PostMapping
     public ResponseEntity<CreateNewsSuccessResponse> createNews(@RequestBody @Valid NewsDto newsDto) {
         return ResponseEntity.ok(newsService.createNews(newsDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getNews(@RequestParam int page, @RequestParam int perPage) {
+        return ResponseEntity.ok(newsService.getNews(page, perPage));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserNews(@PathVariable UUID id,
+                                         @RequestParam int page,
+                                         @RequestParam int perPage) {
+        return ResponseEntity.ok(newsService.getUserNews(page, perPage, id));
     }
 }
