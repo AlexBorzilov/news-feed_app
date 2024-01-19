@@ -1,16 +1,18 @@
 package AlexBorzilov.newsfeed.view;
 
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
+
 
 @Getter
 @Setter
 public class PublicUserView {
-    String avatar;
-    String email;
-    UUID id;
-    String name;
-    String role;
+    private String avatar;
+    private String email;
+    private UUID id;
+    private String name;
+    private String role;
 }

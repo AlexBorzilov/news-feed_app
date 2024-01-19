@@ -1,9 +1,10 @@
 package AlexBorzilov.newsfeed.response;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
+
 
 @Getter
 @Setter
