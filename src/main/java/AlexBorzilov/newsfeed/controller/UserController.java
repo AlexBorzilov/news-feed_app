@@ -1,5 +1,8 @@
 package AlexBorzilov.newsfeed.controller;
 
+import java.util.List;
+import java.util.UUID;
+
 import AlexBorzilov.newsfeed.dto.PutUserDto;
 import AlexBorzilov.newsfeed.error.ValidationConstants;
 import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
@@ -10,12 +13,12 @@ import AlexBorzilov.newsfeed.view.PublicUserView;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/v1/user")

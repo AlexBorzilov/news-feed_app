@@ -1,5 +1,10 @@
 package AlexBorzilov.newsfeed.service;
 
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import AlexBorzilov.newsfeed.dto.NewsDto;
 import AlexBorzilov.newsfeed.entity.NewsEntity;
 import AlexBorzilov.newsfeed.entity.TagEntity;
@@ -10,15 +15,12 @@ import AlexBorzilov.newsfeed.repository.NewsRepo;
 import AlexBorzilov.newsfeed.repository.TagRepo;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CreateNewsSuccessResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +52,6 @@ public class NewsService {
                 new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())
         ));
         newsRepo.save(news);
-        return new CreateNewsSuccessResponse(news.getId(), 1);
+        return new CreateNewsSuccessResponse(news.getId());
     }
 }

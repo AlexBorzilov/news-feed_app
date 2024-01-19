@@ -1,13 +1,13 @@
 package AlexBorzilov.newsfeed.dto;
 
-import AlexBorzilov.newsfeed.error.ErrorCodes;
+import java.util.Set;
+
 import AlexBorzilov.newsfeed.error.ValidationConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
 
 @Getter
 @Setter
