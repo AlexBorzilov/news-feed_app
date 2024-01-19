@@ -15,12 +15,10 @@ import AlexBorzilov.newsfeed.repository.NewsRepo;
 import AlexBorzilov.newsfeed.repository.TagRepo;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CreateNewsSuccessResponse;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-
-
 
 @Service
 @RequiredArgsConstructor
