@@ -36,13 +36,4 @@ public class NewsController {
                                          @RequestParam int perPage) {
         return ResponseEntity.ok(newsService.getUserNews(page, perPage, id));
     }
-
-    @GetMapping("/find")
-    public ResponseEntity<?> findNews(@RequestParam int page,
-                                      @RequestParam int perPage,
-                                      @RequestParam String title,
-                                      @RequestParam String author,
-                                      @RequestParam Set<String> tags) {
-        return ResponseEntity.ok(newsService.findUser(page, perPage, author, title, tags));
-    }
 }
