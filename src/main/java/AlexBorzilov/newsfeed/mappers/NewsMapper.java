@@ -1,5 +1,6 @@
 package AlexBorzilov.newsfeed.mappers;
 
+import AlexBorzilov.newsfeed.dto.GetNewsOutDto;
 import AlexBorzilov.newsfeed.dto.NewsDto;
 import AlexBorzilov.newsfeed.entity.NewsEntity;
 import AlexBorzilov.newsfeed.response.CreateNewsSuccessResponse;
@@ -16,4 +17,5 @@ public interface NewsMapper {
     @Mapping(target = "tags", ignore = true)
     NewsEntity NewsDtoToNewsEntity(NewsDto newsDto);
 
+    GetNewsOutDto NewsEntityToGetNewsOutDto(NewsEntity news);
 }
