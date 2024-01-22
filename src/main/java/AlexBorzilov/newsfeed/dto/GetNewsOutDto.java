@@ -14,7 +14,7 @@ public class GetNewsOutDto {
     private String description;
     private Long id;
     private String image;
-    Set<TagView> tags;
+    private Set<TagView> tags;
     private String title;
     private UUID userId;
     private String username;

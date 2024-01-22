@@ -39,7 +39,7 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("api/v1/auth/register", "api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/v1/news").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/news", "api/v1/news/find").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

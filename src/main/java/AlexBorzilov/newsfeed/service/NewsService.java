@@ -6,12 +6,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import AlexBorzilov.newsfeed.dto.GetNewsOutDto;
+import AlexBorzilov.newsfeed.dto.NewsDto;
 import AlexBorzilov.newsfeed.error.ValidationConstants;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.response.PageableResponse;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import AlexBorzilov.newsfeed.dto.NewsDto;
 import AlexBorzilov.newsfeed.entity.NewsEntity;
 import AlexBorzilov.newsfeed.entity.TagEntity;
 import AlexBorzilov.newsfeed.error.ErrorCodes;
@@ -100,5 +100,4 @@ public class NewsService {
         PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
         return new CustomSuccessResponse<>(response);
     }
-
 }

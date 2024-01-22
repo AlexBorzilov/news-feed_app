@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PageableResponse<T> {
-    List<T> content;
-    long numberOfElements;
+    private List<T> content;
+    private long numberOfElements;
 
     public PageableResponse(List<T> content, long numberOfElements) {
         this.content = content;
