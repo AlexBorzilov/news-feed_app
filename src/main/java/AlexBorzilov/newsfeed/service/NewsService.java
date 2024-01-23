@@ -58,11 +58,12 @@ public class NewsService {
         newsRepo.save(news);
         return new CreateNewsSuccessResponse(news.getId());
     }
+
     public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getNews(int page, int perPage) {
         List<GetNewsOutDto> newsEntityList = newsRepo
                 .findAll(PageRequest.of(page - 1, perPage))
                 .stream()
-                .map(this::getNewsOutDto)
+                .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
                 .toList();
         PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
         return new CustomSuccessResponse<>(response);
@@ -70,10 +71,10 @@ public class NewsService {
 
     public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(int page, int perPage, UUID id) {
         List<GetNewsOutDto> newsEntityList = newsRepo
-                .findAll(PageRequest.of(page-1, perPage))
+                .findAll(PageRequest.of(page - 1, perPage))
                 .stream()
                 .filter(newsEntity -> newsEntity.getUser().getId().equals(id))
-                .map(this::getNewsOutDto)
+                .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
                 .toList();
         PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
         return new CustomSuccessResponse<>(response);
@@ -84,18 +85,9 @@ public class NewsService {
         List<GetNewsOutDto> dtoList = newsRepo
                 .findAll(NewsSpecificationMaker.makeSpec(author, keyWords, tags),
                         PageRequest.of(page - 1, perPage))
-                .map(this::getNewsOutDto)
+                .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
                 .toList();
         return new PageableResponse<>(dtoList, dtoList.size());
-    }
-
-    private GetNewsOutDto getNewsOutDto(NewsEntity news) {
-        GetNewsOutDto getNewsOutDto = NewsMapper.INSTANCE.NewsEntityToGetNewsOutDto(news);
-        getNewsOutDto.setUserId(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
-                new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getId());
-        getNewsOutDto.setUsername(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
-                new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getName());
-        return getNewsOutDto;
     }
 }
 
