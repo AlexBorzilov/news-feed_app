@@ -1,12 +1,13 @@
 package AlexBorzilov.newsfeed.repository;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import AlexBorzilov.newsfeed.entity.NewsEntity;
 import jakarta.persistence.criteria.JoinType;
 import lombok.experimental.UtilityClass;
-import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.springframework.data.jpa.domain.Specification;
 
 @UtilityClass
 public class NewsSpecificationMaker {
@@ -19,10 +20,8 @@ public class NewsSpecificationMaker {
         if (author == null) {
             return Specification.where(null);
         }
-
         return (root, query, criteriaBuilder) -> criteriaBuilder
-                .like(criteriaBuilder.lower(root.get("user").get("name")),
-                        "%" + author.toLowerCase() + "%");
+                .like(criteriaBuilder.lower(root.get("user").get("name")), "%" + author.toLowerCase() + "%");
     }
 
     private static Specification<NewsEntity> makeKeywordSpec(String keyWords) {

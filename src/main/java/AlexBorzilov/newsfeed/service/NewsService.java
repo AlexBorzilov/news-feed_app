@@ -21,6 +21,7 @@ import AlexBorzilov.newsfeed.repository.TagRepo;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CreateNewsSuccessResponse;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,36 @@ public class NewsService {
         newsRepo.save(news);
         return new CreateNewsSuccessResponse(news.getId());
     }
+    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getNews(int page, int perPage) {
+        List<GetNewsOutDto> newsEntityList = newsRepo
+                .findAll(PageRequest.of(page - 1, perPage))
+                .stream()
+                .map(this::getNewsOutDto)
+                .toList();
+        PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
+        return new CustomSuccessResponse<>(response);
+    }
+
+    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(int page, int perPage, UUID id) {
+        List<GetNewsOutDto> newsEntityList = newsRepo
+                .findAll(PageRequest.of(page-1, perPage))
+                .stream()
+                .filter(newsEntity -> newsEntity.getUser().getId().equals(id))
+                .map(this::getNewsOutDto)
+                .toList();
+        PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
+        return new CustomSuccessResponse<>(response);
+    }
+
+    public PageableResponse<GetNewsOutDto> findNews(String author, String keyWords, int page, int perPage,
+                                                    Set<String> tags) {
+        List<GetNewsOutDto> dtoList = newsRepo
+                .findAll(NewsSpecificationMaker.makeSpec(author, keyWords, tags),
+                        PageRequest.of(page - 1, perPage))
+                .map(this::getNewsOutDto)
+                .toList();
+        return new PageableResponse<>(dtoList, dtoList.size());
+    }
 
     private GetNewsOutDto getNewsOutDto(NewsEntity news) {
         GetNewsOutDto getNewsOutDto = NewsMapper.INSTANCE.NewsEntityToGetNewsOutDto(news);
@@ -65,50 +96,6 @@ public class NewsService {
         getNewsOutDto.setUsername(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
                 new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getName());
         return getNewsOutDto;
-    }
-
-    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getNews(@Positive int page,
-                                                                          @Positive int perPage) {
-        List<GetNewsOutDto> newsEntityList = newsRepo
-                .findAll()
-                .stream()
-                .skip(page - 1)
-                .limit(perPage + 1)
-                .map(this::getNewsOutDto)
-                .toList();
-        PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
-        return new CustomSuccessResponse<>(response);
-    }
-
-    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(@Positive int page,
-                                                                              @Positive int perPage,
-                                                                              UUID id) {
-        List<GetNewsOutDto> newsEntityList = newsRepo
-                .findAll()
-                .stream()
-                .filter(newsEntity -> newsEntity.getUser().getId().equals(id))
-                .skip(page - 1)
-                .limit(perPage)
-                .map(this::getNewsOutDto)
-                .toList();
-        PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
-        return new CustomSuccessResponse<>(response);
-    }
-
-    public PageableResponse<GetNewsOutDto> findNews(String author,
-                                                    String keyWords,
-                                                    @Positive int page, @Positive int perPage,
-                                                    Set<String> tags) {
-
-        List<GetNewsOutDto> getNewsOutDtos = newsRepo
-                .findAll(NewsSpecificationMaker.makeSpec(author, keyWords, tags))
-                .stream()
-                .map(this::getNewsOutDto)
-                .skip(page)
-                .limit(perPage)
-                .toList();
-
-        return new PageableResponse<>(getNewsOutDtos, getNewsOutDtos.size());
     }
 }
 

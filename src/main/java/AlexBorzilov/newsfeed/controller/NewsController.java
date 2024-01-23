@@ -1,10 +1,12 @@
 package AlexBorzilov.newsfeed.controller;
 
 import AlexBorzilov.newsfeed.dto.NewsDto;
+import AlexBorzilov.newsfeed.error.ValidationConstants;
 import AlexBorzilov.newsfeed.response.CreateNewsSuccessResponse;
 import AlexBorzilov.newsfeed.service.NewsService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.jpa.repository.Query;
@@ -28,22 +30,29 @@ public class NewsController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getNews(@RequestParam int page, @RequestParam int perPage) {
+    public ResponseEntity<?> getNews(@RequestParam
+                                     @Positive(message = ValidationConstants.PAGE_SIZE_NOT_VALID) int page,
+                                     @RequestParam
+                                     @Positive(message = ValidationConstants.PAGE_SIZE_NOT_VALID) int perPage) {
         return ResponseEntity.ok(newsService.getNews(page, perPage));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserNews(@PathVariable UUID id,
-                                         @RequestParam int page,
-                                         @RequestParam int perPage) {
+                                         @RequestParam
+                                         @Positive(message = ValidationConstants.PAGE_SIZE_NOT_VALID) int page,
+                                         @RequestParam
+                                         @Positive(message = ValidationConstants.PAGE_SIZE_NOT_VALID) int perPage) {
         return ResponseEntity.ok(newsService.getUserNews(page, perPage, id));
     }
 
     @GetMapping("/find")
     public ResponseEntity<?> findNews(@Nullable @RequestParam String author,
                                       @Nullable @RequestParam String keyWords,
-                                      @RequestParam int page,
-                                      @RequestParam int perPage,
+                                      @RequestParam
+                                      @Positive(message = ValidationConstants.PAGE_SIZE_NOT_VALID) int page,
+                                      @RequestParam
+                                      @Positive(message = ValidationConstants.PAGE_SIZE_NOT_VALID) int perPage,
                                       @Nullable @RequestParam Set<String> tags) {
         return ResponseEntity.ok(newsService.findNews(author, keyWords, page, perPage, tags));
     }
