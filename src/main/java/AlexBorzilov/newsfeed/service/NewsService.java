@@ -1,13 +1,12 @@
 package AlexBorzilov.newsfeed.service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import AlexBorzilov.newsfeed.dto.GetNewsOutDto;
 import AlexBorzilov.newsfeed.dto.NewsDto;
 import AlexBorzilov.newsfeed.error.ValidationConstants;
+import AlexBorzilov.newsfeed.repository.NewsSpecificationMaker;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.response.PageableResponse;
 import jakarta.validation.constraints.Positive;
@@ -22,6 +21,7 @@ import AlexBorzilov.newsfeed.repository.TagRepo;
 import AlexBorzilov.newsfeed.repository.UserRepo;
 import AlexBorzilov.newsfeed.response.CreateNewsSuccessResponse;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class NewsService {
                 .map(string -> {
                     if (!tagRepo.existsByTitle(string)) {
                         TagEntity tag = new TagEntity();
-                        tag.setTitle(string);
+                        tag.setTitle(string.toLowerCase());
                         tagRepo.save(tag);
                     }
                     return tagRepo.findByTitle(string).orElseThrow(() ->
@@ -59,45 +59,35 @@ public class NewsService {
         return new CreateNewsSuccessResponse(news.getId());
     }
 
-    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getNews(@Positive int page,
-                                                                          @Positive int perPage) {
+    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getNews(int page, int perPage) {
         List<GetNewsOutDto> newsEntityList = newsRepo
-                .findAll()
+                .findAll(PageRequest.of(page - 1, perPage))
                 .stream()
-                .skip(page - 1)
-                .limit(perPage + 1)
                 .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
-                .peek(getNewsOutDto -> {
-                    getNewsOutDto.setUserId(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
-                            new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getId());
-
-                    getNewsOutDto.setUsername(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
-                            new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getName());
-                })
                 .toList();
         PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
         return new CustomSuccessResponse<>(response);
     }
 
-    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(@Positive int page,
-                                                                              @Positive int perPage,
-                                                                              UUID id) {
+    public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(int page, int perPage, UUID id) {
         List<GetNewsOutDto> newsEntityList = newsRepo
-                .findAll()
+                .findAll(PageRequest.of(page - 1, perPage))
                 .stream()
                 .filter(newsEntity -> newsEntity.getUser().getId().equals(id))
-                .skip(page - 1)
-                .limit(perPage)
                 .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
-                .peek(getNewsOutDto -> {
-                    getNewsOutDto.setUserId(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
-                            new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getId());
-
-                    getNewsOutDto.setUsername(newsRepo.findById(getNewsOutDto.getId()).orElseThrow(() ->
-                            new NewsFeedException(ValidationConstants.NEWS_ID_NULL)).getUser().getName());
-                })
                 .toList();
         PageableResponse<GetNewsOutDto> response = new PageableResponse<>(newsEntityList, newsEntityList.size());
         return new CustomSuccessResponse<>(response);
     }
+
+    public PageableResponse<GetNewsOutDto> findNews(String author, String keyWords, int page, int perPage,
+                                                    Set<String> tags) {
+        List<GetNewsOutDto> dtoList = newsRepo
+                .findAll(NewsSpecificationMaker.makeSpec(author, keyWords, tags),
+                        PageRequest.of(page - 1, perPage))
+                .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
+                .toList();
+        return new PageableResponse<>(dtoList, dtoList.size());
+    }
 }
+
