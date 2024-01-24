@@ -67,4 +67,11 @@ public class NewsController {
     public ResponseEntity<BaseSuccessResponse> delete(@PathVariable("id") long id) {
         return ResponseEntity.ok(newsService.delete(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseSuccessResponse> putNews(@PathVariable("id") long id,
+                                                       @RequestBody @Valid NewsDto newsDto) {
+        return ResponseEntity.ok(newsService.putNews(id, newsDto));
+    }
+
 }
