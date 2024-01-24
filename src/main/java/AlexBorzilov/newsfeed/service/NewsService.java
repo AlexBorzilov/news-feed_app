@@ -10,6 +10,7 @@ import AlexBorzilov.newsfeed.repository.NewsSpecificationMaker;
 import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.response.PageableResponse;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import AlexBorzilov.newsfeed.entity.NewsEntity;
@@ -106,5 +107,19 @@ public class NewsService {
             throw new NewsFeedException(ErrorCodes.UNAUTHORISED.getErrorMessage());
         }
     }
-}
 
+    public BaseSuccessResponse putNews(long id, NewsDto newsDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uuid = authentication.getName();
+        NewsEntity news = newsRepo.findById(id).orElseThrow(() ->
+                new NewsFeedException(ErrorCodes.NEWS_NOT_FOUND.getErrorMessage()));
+        if (news.getUser().getId().equals(UUID.fromString(uuid))) {
+            news = NewsMapper.INSTANCE.NewsDtoToNewsEntity(newsDto);
+            newsRepo.save(news);
+            return new BaseSuccessResponse();
+        }
+        else {
+            throw new NewsFeedException(ErrorCodes.UNAUTHORISED.getErrorMessage());
+        }
+    }
+}
