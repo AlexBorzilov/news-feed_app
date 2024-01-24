@@ -35,4 +35,5 @@ public interface NewsRepo extends JpaRepository<NewsEntity, Long>, JpaSpecificat
     @EntityGraph(attributePaths = {"tags", "user"})
     Page<NewsEntity> findAll(@Nullable Specification spec, @Nonnull Pageable pageable);
 
+    void deleteById(long id);
 }

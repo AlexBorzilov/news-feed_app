@@ -7,6 +7,7 @@ import AlexBorzilov.newsfeed.dto.GetNewsOutDto;
 import AlexBorzilov.newsfeed.dto.NewsDto;
 import AlexBorzilov.newsfeed.error.ValidationConstants;
 import AlexBorzilov.newsfeed.repository.NewsSpecificationMaker;
+import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import AlexBorzilov.newsfeed.response.PageableResponse;
 import jakarta.validation.constraints.Positive;
@@ -88,6 +89,22 @@ public class NewsService {
                 .map(NewsMapper.INSTANCE::NewsEntityToGetNewsOutDto)
                 .toList();
         return new PageableResponse<>(dtoList, dtoList.size());
+    }
+
+    public BaseSuccessResponse delete(long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uuid = authentication.getName();
+
+        if (newsRepo.findById(id).
+                orElseThrow(() ->
+                        new NewsFeedException(ErrorCodes.NEWS_NOT_FOUND.getErrorMessage()))
+                .getUser().getId().equals(UUID.fromString(uuid))) {
+            newsRepo.deleteById(id);
+            return new BaseSuccessResponse();
+        }
+        else {
+            throw new NewsFeedException(ErrorCodes.UNAUTHORISED.getErrorMessage());
+        }
     }
 }
 
