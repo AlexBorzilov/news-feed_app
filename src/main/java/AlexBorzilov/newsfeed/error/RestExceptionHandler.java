@@ -6,6 +6,7 @@ import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,7 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
-    
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseSuccessResponse> handleNotReadableMessageException() {
@@ -48,6 +49,13 @@ public class RestExceptionHandler {
                 .toList();
         return new ResponseEntity<>(new CustomSuccessResponse<>(statusCodes, statusCodes.get(0)),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<BaseSuccessResponse> handleFileException(FileUploadException e) {
+        return new ResponseEntity<>(new BaseSuccessResponse(
+                ErrorCodes.determineErrorCode(e.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
