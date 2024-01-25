@@ -1,6 +1,9 @@
 package AlexBorzilov.newsfeed.service;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -12,6 +15,8 @@ import AlexBorzilov.newsfeed.error.NewsFeedException;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.core.io.FileUrlResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,5 +42,19 @@ public class FileService {
                     throw new NewsFeedException(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
                 });
         return new CustomSuccessResponse<>(URL_FILE + file.getOriginalFilename());
+    }
+
+    public URL getFile(String fileName) {
+        if (!Files.exists(Paths.get(UPLOAD_PATH + fileName))) {
+            throw new NewsFeedException(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
+        }
+        URI uri;
+        try {
+            uri = new URI(URL_FILE + fileName);
+        }
+        catch (URISyntaxException e) {
+            throw new NewsFeedException(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
+        }
+        return UrlResource.from(uri).getURL();
     }
 }
