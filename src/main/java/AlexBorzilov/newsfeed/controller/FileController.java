@@ -30,8 +30,8 @@ public class FileController {
         return ResponseEntity.ok(fileService.uploadFile(file));
     }
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<URL> getFile(@PathVariable("fileName") String fileName) {
+    @GetMapping(value = "/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UrlResource> getFile(@PathVariable("fileName") String fileName) {
         return ResponseEntity.ok(fileService.getFile(fileName));
     }
 }

@@ -31,6 +31,7 @@ public class UserEntity implements UserDetails {
     private String email;
     private String role;
     private String avatar;
+    @Column(nullable = false)
     private String password;
 
     @Override
