@@ -15,6 +15,7 @@ import AlexBorzilov.newsfeed.error.ErrorCodes;
 import AlexBorzilov.newsfeed.error.NewsFeedException;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -22,8 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileService {
-    private final String URL_FILE = "http://localhost:8080/api/v1/file/";
-    private final String UPLOAD_PATH = "src/main/resources/homework/";
+
+    @Value("${url.file}")
+    private String URL_FILE;
+
+    @Value("${upload.path}")
+    private String UPLOAD_PATH;
 
     public CustomSuccessResponse<String> uploadFile(MultipartFile file) {
         Optional.ofNullable(file)
