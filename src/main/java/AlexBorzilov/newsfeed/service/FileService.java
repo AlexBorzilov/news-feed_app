@@ -1,10 +1,11 @@
 package AlexBorzilov.newsfeed.service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
@@ -13,18 +14,21 @@ import java.util.Optional;
 import AlexBorzilov.newsfeed.error.ErrorCodes;
 import AlexBorzilov.newsfeed.error.NewsFeedException;
 import AlexBorzilov.newsfeed.response.CustomSuccessResponse;
-import lombok.RequiredArgsConstructor;
 
-import org.springframework.core.io.FileUrlResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@RequiredArgsConstructor
 public class FileService {
-    private final String URL_FILE = "http://localhost:8080/api/v1/file/";
-    private final String UPLOAD_PATH = "src/main/resources/homework/";
+
+    @Value("${url.file}")
+    private String URL_FILE;
+
+    @Value("${upload.path}")
+    private String UPLOAD_PATH;
 
     public CustomSuccessResponse<String> uploadFile(MultipartFile file) {
         Optional.ofNullable(file)
@@ -44,17 +48,17 @@ public class FileService {
         return new CustomSuccessResponse<>(URL_FILE + file.getOriginalFilename());
     }
 
-    public URL getFile(String fileName) {
-        if (!Files.exists(Paths.get(UPLOAD_PATH + fileName))) {
-            throw new NewsFeedException(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
-        }
-        URI uri;
+    public UrlResource getFile(String fileName) {
         try {
-            uri = new URI(URL_FILE + fileName);
+
+            URL file = ResourceUtils.getFile(UPLOAD_PATH + fileName).getAbsoluteFile().toURI().toURL();
+            if (!Files.exists(Path.of(file.getPath()))) {
+                throw new NewsFeedException(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
+            }
+            return new UrlResource(file);
         }
-        catch (URISyntaxException e) {
+        catch (FileNotFoundException | MalformedURLException e) {
             throw new NewsFeedException(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
         }
-        return UrlResource.from(uri).getURL();
     }
 }
