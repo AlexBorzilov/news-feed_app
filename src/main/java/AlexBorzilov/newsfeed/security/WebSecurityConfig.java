@@ -1,12 +1,14 @@
 package AlexBorzilov.newsfeed.security;
 
 import AlexBorzilov.newsfeed.error.ErrorCodes;
+import AlexBorzilov.newsfeed.repository.LogRepo;
 import AlexBorzilov.newsfeed.response.BaseSuccessResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -15,24 +17,31 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
 @PropertySource("classpath:application-dev.properties")
-public class WebSecurityConfig {
+public class WebSecurityConfig implements WebMvcConfigurer {
     private final JwtFilter jwtFilter;
     private final UserLoadUtility userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final LogRepo logRepo;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LogInterceptor(logRepo));
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,7 +66,6 @@ public class WebSecurityConfig {
                 }));
         return http.build();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
