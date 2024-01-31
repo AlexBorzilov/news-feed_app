@@ -1,28 +1,28 @@
 package aborzilov.newsfeed.service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import aborzilov.newsfeed.dto.GetNewsOutDto;
 import aborzilov.newsfeed.dto.NewsDto;
-import aborzilov.newsfeed.repository.NewsSpecificationMaker;
-import aborzilov.newsfeed.response.BaseSuccessResponse;
-import aborzilov.newsfeed.response.CustomSuccessResponse;
-import aborzilov.newsfeed.response.PageableResponse;
+import aborzilov.newsfeed.entity.NewsEntity;
 import aborzilov.newsfeed.entity.TagEntity;
 import aborzilov.newsfeed.error.ErrorCodes;
 import aborzilov.newsfeed.error.NewsFeedException;
 import aborzilov.newsfeed.mappers.NewsMapper;
-import aborzilov.newsfeed.repository.UserRepo;
-import lombok.RequiredArgsConstructor;
-import aborzilov.newsfeed.entity.NewsEntity;
 import aborzilov.newsfeed.repository.NewsRepo;
+import aborzilov.newsfeed.repository.NewsSpecificationMaker;
 import aborzilov.newsfeed.repository.TagRepo;
+import aborzilov.newsfeed.repository.UserRepo;
+import aborzilov.newsfeed.response.BaseSuccessResponse;
 import aborzilov.newsfeed.response.CreateNewsSuccessResponse;
+import aborzilov.newsfeed.response.CustomSuccessResponse;
+import aborzilov.newsfeed.response.PageableResponse;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +33,9 @@ public class NewsService {
     private final UserRepo userRepo;
 
     private Set<TagEntity> createTags(Set<String> set) {
+        if (set == null) {
+            throw new NewsFeedException(ErrorCodes.TAGS_NOT_VALID.getErrorMessage());
+        }
         return set
                 .stream()
                 .map(string -> {
@@ -46,15 +49,13 @@ public class NewsService {
                 }).collect(Collectors.toSet());
     }
 
-    public CreateNewsSuccessResponse createNews(NewsDto newsDto) {
+    public CreateNewsSuccessResponse createNews(NewsDto newsDto, String id) {
         NewsEntity news = NewsMapper.INSTANCE.NewsDtoToNewsEntity(newsDto);
         news.setTags(createTags(newsDto.getTags()));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
         news.setUser(userRepo.findById(UUID.fromString(id)).orElseThrow(() ->
                 new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage())
         ));
-        newsRepo.save(news);
+        news = newsRepo.save(news);
         return new CreateNewsSuccessResponse(news.getId());
     }
 
@@ -69,6 +70,9 @@ public class NewsService {
     }
 
     public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(int page, int perPage, UUID id) {
+        if (userRepo.findById(id).isEmpty()) {
+            throw new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        }
         List<GetNewsOutDto> newsEntityList = newsRepo
                 .findAll(PageRequest.of(page - 1, perPage))
                 .stream()
@@ -89,10 +93,7 @@ public class NewsService {
         return new PageableResponse<>(dtoList, dtoList.size());
     }
 
-    public BaseSuccessResponse delete(long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String uuid = authentication.getName();
-
+    public BaseSuccessResponse delete(long id, String uuid) {
         if (newsRepo.findById(id).
                 orElseThrow(() ->
                         new NewsFeedException(ErrorCodes.NEWS_NOT_FOUND.getErrorMessage()))
@@ -105,9 +106,7 @@ public class NewsService {
         }
     }
 
-    public BaseSuccessResponse putNews(long id, NewsDto newsDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String uuid = authentication.getName();
+    public BaseSuccessResponse putNews(long id, NewsDto newsDto, String uuid) {
         NewsEntity news = newsRepo.findById(id).orElseThrow(() ->
                 new NewsFeedException(ErrorCodes.NEWS_NOT_FOUND.getErrorMessage()));
         if (news.getUser().getId().equals(UUID.fromString(uuid))) {

@@ -6,8 +6,6 @@ import aborzilov.newsfeed.view.TagView;
 import lombok.Getter;
 import lombok.Setter;
 
-
-
 @Getter
 @Setter
 public class GetNewsOutDto {
