@@ -26,9 +26,7 @@ public class FileService {
 
     @Value("${url.file}")
     private String URL_FILE;
-
-    @Value("${upload.path}")
-    private String UPLOAD_PATH;
+    private String UPLOAD_PATH = "src/main/resources/homework/";
 
     public CustomSuccessResponse<String> uploadFile(MultipartFile file) {
         Optional.ofNullable(file)

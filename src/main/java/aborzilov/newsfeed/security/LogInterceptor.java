@@ -1,10 +1,5 @@
 package aborzilov.newsfeed.security;
 
-import java.util.Enumeration;
-import java.util.Objects;
-import java.util.stream.Stream;
-
-import aborzilov.newsfeed.entity.LogEntity;
 import aborzilov.newsfeed.mappers.LogMapper;
 import aborzilov.newsfeed.model.LogModel;
 import aborzilov.newsfeed.repository.LogRepo;
