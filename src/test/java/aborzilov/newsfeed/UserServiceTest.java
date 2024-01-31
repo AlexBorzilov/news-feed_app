@@ -85,15 +85,17 @@ public class UserServiceTest {
     @Test
     void incorrectReplaceUserTest() {
         PutUserDto putUserDto = new PutUserDto();
-        putUserDto.setAvatar("  ");
-        putUserDto.setName("  ");
-        putUserDto.setRole(" ");
-        putUserDto.setEmail(" ");
-
+        putUserDto.setAvatar("test.jpg");
+        putUserDto.setName("test name");
+        putUserDto.setRole("user");
+        putUserDto.setEmail("test@mail.ru");
+        when(userRepo.findById(any(UUID.class)))
+                .thenReturn(Optional.empty());
         NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
                 () -> userService.replaceUser(putUserDto, ID));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.USER_AVATAR_NOT_NULL);
+                .isEqualTo(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
@@ -105,6 +107,7 @@ public class UserServiceTest {
         softAssertions
                 .assertThat(response.getStatusCode())
                 .isEqualTo(1);
+        softAssertions.assertAll();
     }
 
     @Test
@@ -114,7 +117,8 @@ public class UserServiceTest {
         NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
                 () -> userService.deleteUser(ID));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.USER_NOT_FOUND);
+                .isEqualTo(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
@@ -124,7 +128,8 @@ public class UserServiceTest {
         NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
                 () -> userService.getUserInfoById(UUID.fromString(ID)));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.USER_NOT_FOUND);
+                .isEqualTo(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
@@ -148,7 +153,6 @@ public class UserServiceTest {
                 () -> userService.getUserInfo(ID));
         softAssertions.assertThat(e.getMessage())
                 .isEqualTo(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
-
-
 }

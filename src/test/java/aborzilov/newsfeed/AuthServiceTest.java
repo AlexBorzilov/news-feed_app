@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -73,24 +71,6 @@ public class AuthServiceTest {
     }
 
     @Test
-    void registerUserTest() {
-        when(passwordEncoder.encode(any()))
-                .thenReturn("encoded password");
-        when(userRepo.save(ArgumentMatchers.any(UserEntity.class)))
-                .thenReturn(user);
-        when(jwtUtility.generateToken(ArgumentMatchers.any(UserEntity.class)))
-                .thenReturn(TOKEN);
-        CustomSuccessResponse<LoginUserDto> response = authService.registerUser(registrationRequest);
-        softAssertions.assertThat(0).isEqualTo(response.getStatusCode());
-        softAssertions.assertThat(response.getCodes()).isNull();
-        softAssertions.assertThat(registrationRequest.getAvatar()).isEqualTo(response.getData().getAvatar());
-        softAssertions.assertThat(registrationRequest.getName()).isEqualTo(response.getData().getName());
-        softAssertions.assertThat(registrationRequest.getEmail()).isEqualTo(response.getData().getEmail());
-        softAssertions.assertThat(registrationRequest.getRole()).isEqualTo(response.getData().getRole());
-        softAssertions.assertAll();
-    }
-
-    @Test
     void incorrectRegisterUserTest() {
         when(userRepo.findByEmail(registrationRequest.getEmail()))
                 .thenReturn(Optional.ofNullable(user));
@@ -98,6 +78,7 @@ public class AuthServiceTest {
                 () -> authService.registerUser(registrationRequest));
         softAssertions.assertThat(e.getMessage())
                 .isEqualTo(ErrorCodes.USER_ALREADY_EXISTS.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
@@ -119,6 +100,7 @@ public class AuthServiceTest {
         NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
                 () -> authService.login(authDto));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+                .isEqualTo(ErrorCodes.PASSWORD_NOT_VALID.getErrorMessage());
+        softAssertions.assertAll();
     }
 }

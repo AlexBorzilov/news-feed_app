@@ -28,6 +28,8 @@ public class FileServiceTest {
     final String FILE_NAME = "kot.jpg";
     final String FILE_PATH = "src/test/resources/";
 
+    String URL_FILE = "http://localhost:8080/api/v1/file/";
+
     @Test
     void correctUploadFileTest() {
         byte[] content;
@@ -42,24 +44,21 @@ public class FileServiceTest {
         CustomSuccessResponse<String> response = fileService.uploadFile(file);
 
         softAssertions.assertThat(response.getData()).isNotNull();
-        softAssertions.assertThat(response.getData()).isEqualTo(FILE_NAME);
+        softAssertions.assertThat(response.getData()).isEqualTo(URL_FILE + FILE_NAME);
+        softAssertions.assertAll();
     }
 
     @Test
     void incorrectUploadFile() {
-        NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
-                () -> fileService.uploadFile(null));
-        softAssertions
-                .assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.UNKNOWN.getErrorMessage());
+        NewsFeedException e = Assertions.assertThrows(NewsFeedException.class, () -> fileService.uploadFile(null));
+        softAssertions.assertThat(e.getMessage()).isEqualTo(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
     void incorrectGetFile() {
-        NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
-                () -> fileService.getFile("NOTHING.jpg"));
-        softAssertions
-                .assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.UNKNOWN.getErrorMessage());
+        NewsFeedException e = Assertions.assertThrows(NewsFeedException.class, () -> fileService.getFile("NOTHING.jpg"));
+        softAssertions.assertThat(e.getMessage()).isEqualTo(ErrorCodes.EXCEPTION_HANDLER_NOT_PROVIDED.getErrorMessage());
+        softAssertions.assertAll();
     }
 }

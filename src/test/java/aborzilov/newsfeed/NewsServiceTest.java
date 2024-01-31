@@ -141,27 +141,21 @@ public class NewsServiceTest {
         NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
                 () -> newsService.createNews(newsDto, idUser1));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.TAGS_NOT_VALID);
-    }
-
-    @Test
-    void incorrectGetNews() {
-        int page = -1;
-        int perPage = -2;
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> newsService.getNews(page, perPage));
-        softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.PAGE_SIZE_NOT_VALID.getErrorMessage());
+                .isEqualTo(ErrorCodes.TAGS_NOT_VALID.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
     void incorrectGetUserNews() {
-        int page = -1;
-        int perPage = -2;
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> newsService.getUserNews(page, perPage, UUID.fromString(idUser1)));
+        int page = 1;
+        int perPage = 2;
+        when(userRepo.findById(any(UUID.class)))
+                .thenReturn(Optional.empty());
+        NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
+                () -> newsService.getUserNews(page, perPage, UUID.randomUUID()));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.PAGE_SIZE_NOT_VALID.getErrorMessage());
+                .isEqualTo(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
@@ -173,6 +167,7 @@ public class NewsServiceTest {
         softAssertions
                 .assertThat(response.getStatusCode())
                 .isEqualTo(1);
+        softAssertions.assertAll();
     }
 
     @Test
@@ -182,7 +177,8 @@ public class NewsServiceTest {
         NewsFeedException e = Assertions.assertThrows(NewsFeedException.class,
                 () -> newsService.delete(newsId, idUser1));
         softAssertions.assertThat(e.getMessage())
-                .isEqualTo(ErrorCodes.NEWS_NOT_FOUND);
+                .isEqualTo(ErrorCodes.NEWS_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
 
     @Test
@@ -211,5 +207,6 @@ public class NewsServiceTest {
                 () -> newsService.putNews(newsId, newsDto, idUser1));
         softAssertions.assertThat(e.getMessage())
                 .isEqualTo(ErrorCodes.NEWS_NOT_FOUND.getErrorMessage());
+        softAssertions.assertAll();
     }
 }

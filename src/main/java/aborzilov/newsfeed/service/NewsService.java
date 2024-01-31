@@ -70,6 +70,9 @@ public class NewsService {
     }
 
     public CustomSuccessResponse<PageableResponse<GetNewsOutDto>> getUserNews(int page, int perPage, UUID id) {
+        if (userRepo.findById(id).isEmpty()) {
+            throw new NewsFeedException(ErrorCodes.USER_NOT_FOUND.getErrorMessage());
+        }
         List<GetNewsOutDto> newsEntityList = newsRepo
                 .findAll(PageRequest.of(page - 1, perPage))
                 .stream()

@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileService {
 
     @Value("${url.file}")
-    private String URL_FILE;
+    private String URL_FILE = "http://localhost:8080/api/v1/file/";
     private String UPLOAD_PATH = "src/main/resources/homework/";
 
     public CustomSuccessResponse<String> uploadFile(MultipartFile file) {
